@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, ParamMap } from "@angular/router";
+import { switchMap } from "rxjs/operators";
+
 
 @Component({
   selector: 'app-viewer',
@@ -7,7 +10,17 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ViewerComponent implements OnInit {
 
-  constructor() { }
+  public vfx: string;
+
+  constructor(private route: ActivatedRoute) { 
+    let target$ = this.route.paramMap.pipe(switchMap((params: ParamMap) => {
+      return params.get('type');
+    }));
+    
+    target$.forEach(v => {
+      this.vfx = v;
+    })
+  }
 
   ngOnInit() {
   }
