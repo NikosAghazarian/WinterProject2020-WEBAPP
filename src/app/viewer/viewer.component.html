@@ -1,10 +1,12 @@
 <table>
     <thead>
-        <!-- <tr *ngFor="let _ of _">
-            <th scope="col">{{}}</th>
-        </tr> -->
+        <tr>
+            <th *ngFor="let headers of tableHeaders" scope="col">{{headers}}</th>
+        </tr>
+        <tr *ngFor="let row of tableRows">
+            <td *ngFor="let item of row | keyvalue: ForceOriginalOrder">{{item.key}} - {{item.value}}</td>
+        </tr>
     </thead>
-
 </table>
-
-<p>target: {{vfx}}</p>
+<br>
+<p>target: {{routeTarget}}, JSON: {{tableRows}}</p>
