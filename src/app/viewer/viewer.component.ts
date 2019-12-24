@@ -22,7 +22,7 @@ export class ViewerComponent implements OnInit {
   
   private FAKE_NEWS_PARSED: JSON = JSON.parse(this.FAKE_NEWS);
   public tableRows: Array<Object> = this.FAKE_NEWS_PARSED["rows"];
-  public tableHeaders: Array<string> = Object.getOwnPropertyNames(this.tableRows[0]);
+  public tableHeaders: Array<string> = Object.getOwnPropertyNames(this.tableRows[0]); // Table headers are based on only the first row's propery names
 
   
   constructor(private route: ActivatedRoute, private Router: Router, private apiSvc: DbApiBinderService) {  // This gets the routing parameter
