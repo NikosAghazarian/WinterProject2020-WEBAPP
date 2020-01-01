@@ -17,11 +17,12 @@ export class DbApiBinderService {
     [6,"TxnData"]
   ])
 
-  public InformationRequest(infoCode: number) {
-    this.infoCodeDict[infoCode];
+  public InformationRequest(infoCode: number): Promise<any> {
+    let targetEndpoint: string = this.infoCodeDict.get(infoCode);
+    return this.RequestDbData(targetEndpoint + '/R/')
   }
 
-  private RequestDbData(path: string) {
+  private RequestDbData(path: string, requestMethod: string = 'Get', body: string = ''): Promise<any> {
     /* 
     *  Handles and returns an XHR promise with a given path of the app
     */
@@ -29,7 +30,7 @@ export class DbApiBinderService {
     return new Promise( (resolve, reject): void => {
         let request: XMLHttpRequest = new XMLHttpRequest();
         request.responseType = 'json';
-        request.open('GET', url, true);
+        request.open(requestMethod, url, true);
         request.onload = (): void => {
             let status = request.status;
             if (status >= 200 && status < 300) {
@@ -42,8 +43,10 @@ export class DbApiBinderService {
         request.onerror = (): void => {
             console.log(request.statusText);
         };
-        request.send();
+        request.send(body);
     });
   }
+
+  
 
 }
