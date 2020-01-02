@@ -4,7 +4,7 @@
             <th *ngFor="let headers of tableHeaders" scope="col">{{headers}}</th>
         </tr>
         <tr *ngFor="let row of tableRows">
-            <td *ngFor="let item of row | keyvalue: ForceOriginalOrder">{{item.key}} - {{item.value}}</td>
+            <td *ngFor="let item of row | keyvalue: ForceOriginalOrder">{{item.value}}</td>
         </tr>
     </thead>
 </table>

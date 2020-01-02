@@ -21,19 +21,18 @@ export class ViewerComponent implements OnInit {
     }));
     target$.forEach( (val: string) => {
       this.routeTarget = val;
+
+      let info: Promise<any>;
+
+      ( +this.routeTarget === parseInt(this.routeTarget) && parseInt(this.routeTarget) < 7 ) ?
+        ( info = apiSvc.InformationRequest(+this.routeTarget) ) :
+        ( this.Router.navigate(['/NOT_FOUND']) );
+
+      info.then( (returnedData) => {
+        this.tableRows = returnedData;
+        this.tableHeaders = Object.getOwnPropertyNames(this.tableRows[0]); // Table headers are based on only the first row's propery names
+      });
     });
-
-    let info: Promise<any>;
-
-    ( +this.routeTarget === parseInt(this.routeTarget) && parseInt(this.routeTarget) < 7 ) ?
-      ( info = apiSvc.InformationRequest(+this.routeTarget) ) :
-      ( this.Router.navigate(['/NOT_FOUND']) );
-
-    info.then( (returnedData) => {
-      this.tableRows = returnedData;
-      this.tableHeaders = Object.getOwnPropertyNames(this.tableRows[0]); // Table headers are based on only the first row's propery names
-    });
-
   }
 
   public ForceOriginalOrder = () => {return 0;} // Comparator Fn for keyvalue pipe

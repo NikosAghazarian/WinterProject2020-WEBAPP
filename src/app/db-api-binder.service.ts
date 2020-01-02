@@ -19,6 +19,7 @@ export class DbApiBinderService {
 
   public InformationRequest(infoCode: number): Promise<any> {
     let targetEndpoint: string = this.infoCodeDict.get(infoCode);
+    console.log(targetEndpoint);
     return this.RequestDbData(targetEndpoint + '/R/')
   }
 
