@@ -13,30 +13,45 @@ export class ViewerComponent implements OnInit {
 
   public tableRows: Array<Object>;
   public tableHeaders: Array<string>;
+  public rowAdditionBox: HTMLTextAreaElement = <HTMLTextAreaElement>document.getElementById("row_addition_box"); //typecast to stop IDE errors
 
-  public routeTarget: string;
+  public routeTarget: number;
+
   constructor(private route: ActivatedRoute, private Router: Router, private apiSvc: DbApiBinderService) {  
     let target$ = this.route.paramMap.pipe(switchMap((params: ParamMap) => { // This gets the routing parameter
       return params.get('type');
     }));
+
     target$.forEach( (val: string) => {
-      this.routeTarget = val;
+      if (ValidateRouteTarget(val)) {
+        this.routeTarget = +val;
+      }
+      else {
+        this.Router.navigate(['/NOT_FOUND']);
+      }
 
-      let info: Promise<any>;
-
-      ( +this.routeTarget === parseInt(this.routeTarget) && parseInt(this.routeTarget) < 7 ) ?
-        ( info = apiSvc.InformationRequest(+this.routeTarget) ) :
-        ( this.Router.navigate(['/NOT_FOUND']) );
+      let info: Promise<any> = this.apiSvc.InformationRequest(this.routeTarget);
 
       info.then( (returnedData) => {
         this.tableRows = returnedData;
         this.tableHeaders = Object.getOwnPropertyNames(this.tableRows[0]); // Table headers are based on only the first row's propery names
       });
+
+      function ValidateRouteTarget(value: string): boolean {
+        if (+value === parseInt(value) && parseInt(value) < 7) return true;
+        return false;
+      }
     });
   }
 
-  public ForceOriginalOrder = () => {return 0;} // Comparator Fn for keyvalue pipe
+  
 
+  public CreateNewRows(): void {
+    this.rowAdditionBox.value;
+    //this.apiSvc.NewInformationEntry(+this.routeTarget, this.rowAdditionBox.value)
+  }
+
+  public ForceOriginalOrder = () => {return 0;} // Comparator Fn for keyvalue pipe
 
   ngOnInit() {
   }
