@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, ParamMap, Router } from "@angular/router";
-import { switchMap } from "rxjs/operators";
-import { DbApiBinderService } from "../db-api-binder.service";
+import { Component, OnInit, AfterViewChecked } from '@angular/core';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
+import { switchMap } from 'rxjs/operators';
+import { DbApiBinderService } from '../db-api-binder.service';
 
 
 @Component({
@@ -9,28 +9,27 @@ import { DbApiBinderService } from "../db-api-binder.service";
   templateUrl: './viewer.component.html',
   styleUrls: ['./viewer.component.scss']
 })
-export class ViewerComponent implements OnInit {
+export class ViewerComponent implements AfterViewChecked {
 
-  public tableRows: Array<Object>;
+  public tableRows: Array<object>;
   public tableHeaders: Array<string>;
-  public rowAdditionBox: HTMLTextAreaElement = <HTMLTextAreaElement>document.getElementById("row_addition_box"); //typecast to stop IDE errors
+  public rowAdditionBox: HTMLTextAreaElement;
 
   public routeTarget: number;
 
-  constructor(private route: ActivatedRoute, private Router: Router, private apiSvc: DbApiBinderService) {  
-    let target$ = this.route.paramMap.pipe(switchMap((params: ParamMap) => { // This gets the routing parameter
+  constructor(private route: ActivatedRoute, private Router: Router, private apiSvc: DbApiBinderService) {
+    const target$ = this.route.paramMap.pipe(switchMap((params: ParamMap) => { // This gets the routing parameter
       return params.get('type');
     }));
 
     target$.forEach( (val: string) => {
       if (ValidateRouteTarget(val)) {
         this.routeTarget = +val;
-      }
-      else {
+      } else {
         this.Router.navigate(['/NOT_FOUND']);
       }
 
-      let info: Promise<any> = this.apiSvc.InformationRequest(this.routeTarget);
+      const info: Promise<any> = this.apiSvc.InformationRequest(this.routeTarget);
 
       info.then( (returnedData) => {
         this.tableRows = returnedData;
@@ -38,22 +37,23 @@ export class ViewerComponent implements OnInit {
       });
 
       function ValidateRouteTarget(value: string): boolean {
-        if (+value === parseInt(value) && parseInt(value) < 7) return true;
+        if (+value === parseInt(value, 10) && parseInt(value, 10) < 7) {
+          return true;
+        }
         return false;
       }
     });
   }
 
-  
 
   public CreateNewRows(): void {
     this.rowAdditionBox.value;
-    //this.apiSvc.NewInformationEntry(+this.routeTarget, this.rowAdditionBox.value)
+    this.apiSvc.NewInformationEntry(+this.routeTarget, this.rowAdditionBox.value)
   }
 
-  public ForceOriginalOrder = () => {return 0;} // Comparator Fn for keyvalue pipe
+  public ForceOriginalOrder = () => 0; // Comparator Fn for keyvalue pipe
 
-  ngOnInit() {
+  ngAfterViewChecked() {
+    this.rowAdditionBox = document.getElementById('row_addition_box') as HTMLTextAreaElement; // Typecast to stop IDE errors
   }
-
 }
