@@ -29,12 +29,13 @@ export class ViewerComponent implements AfterViewChecked {
         this.Router.navigate(['/NOT_FOUND']);
       }
 
-      const info: Promise<any> = this.apiSvc.InformationRequest(this.routeTarget);
+      /* const info: Promise<any> = this.apiSvc.InformationRequest(this.routeTarget);
 
       info.then( (returnedData) => {
         this.tableRows = returnedData;
         this.tableHeaders = Object.getOwnPropertyNames(this.tableRows[0]); // Table headers are based on only the first row's propery names
-      });
+      }); */
+      this.DrawTable();
 
       function ValidateRouteTarget(value: string): boolean {
         if (+value === parseInt(value, 10) && parseInt(value, 10) < 7) {
@@ -48,10 +49,20 @@ export class ViewerComponent implements AfterViewChecked {
 
   public CreateNewRows(): void {
     this.rowAdditionBox.value;
-    this.apiSvc.NewInformationEntry(+this.routeTarget, this.rowAdditionBox.value)
+    this.apiSvc.NewInformationEntry(+this.routeTarget, this.rowAdditionBox.value).then(() => {
+      this.DrawTable();
+    });
   }
 
   public ForceOriginalOrder = () => 0; // Comparator Fn for keyvalue pipe
+
+  public DrawTable(): void {
+    const info: Promise<any> = this.apiSvc.InformationRequest(this.routeTarget);
+    info.then( (returnedData) => {
+      this.tableRows = returnedData;
+      this.tableHeaders = Object.getOwnPropertyNames(this.tableRows[0]); // Table headers are based on only the first row's propery names
+    });
+  }
 
   ngAfterViewChecked() {
     this.rowAdditionBox = document.getElementById('row_addition_box') as HTMLTextAreaElement; // Typecast to stop IDE errors

@@ -58,6 +58,7 @@ export class DbApiBinderService {
         const request: XMLHttpRequest = new XMLHttpRequest();
         request.responseType = 'json';
         request.open(requestMethod, url, true);
+        request.setRequestHeader('content-type', 'application/json');
         request.onload = (): void => {
             const status = request.status;
             if (status >= 200 && status < 300) {
